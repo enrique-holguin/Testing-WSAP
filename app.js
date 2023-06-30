@@ -6,9 +6,12 @@ const MockAdapter = require("@bot-whatsapp/database/mock");
 const BOTNAME = "Cremoladas-Bot";
 const BOTPORT = 3001;
 
+//Flows
+const flowMain = require("./flows/flowMain");
+
 const main = async () => {
   const adapterDB = new MockAdapter();
-  const adapterFlow = createFlow([]);
+  const adapterFlow = createFlow([flowMain]);
   const adapterProvider = createProvider(BaileysProvider);
 
   createBot({
