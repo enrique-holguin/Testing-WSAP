@@ -5,8 +5,6 @@ const { createBot, createProvider, createFlow } = require("@bot-whatsapp/bot");
 const QRPortalWeb = require("@bot-whatsapp/portal");
 const BaileysProvider = require("@bot-whatsapp/provider/baileys");
 const MockAdapter = require("@bot-whatsapp/database/mock");
-const BOTNAME = process.env.BOT_NAME;
-const BOTPORT = process.env.BOT_PORT;
 const express = require("express");
 const { join } = require("path");
 const { createReadStream, readFileSync } = require("fs");
@@ -51,8 +49,8 @@ const main = async () => {
     fileStream.pipe(res);
   });
 
-  app.listen(BOTPORT, "0.0.0.0", () => {
-    console.log(`http://localhost:${BOTPORT}`);
+  app.listen(process.env.PORT, "0.0.0.0", () => {
+    console.log(`http://localhost:${process.env.PORT}`);
   });
 };
 
