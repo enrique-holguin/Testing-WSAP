@@ -6,9 +6,7 @@ class CustomerRepository {
   }
   getCustomer(phone) {
     const customer = customers[phone];
-    return customer
-      ? `Name: ${customer.name}, Address:${customer.address}`
-      : false;
+    return customer ?? false;
   }
 }
 

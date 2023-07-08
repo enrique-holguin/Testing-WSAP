@@ -10,31 +10,32 @@ const customerService = new CustomerService(customerRepository);
 const flowMain = addKeyword(EVENTS.WELCOME)
   .addAction(async (ctx, { fallBack, flowDynamic, endFlow }) => {
     const { from: phone } = ctx;
-    const customer = customerService.getCustomer(phone);
+    const customer = await customerService.getCustomer(phone);
     if (customer) {
-      console.log(customers);
-      return await endFlow(
-        `El usuario con el número ${phone} ya está registrado`
-      );
+      console.log(customer);
+      return endFlow(`El usuario con el número ${phone} ya está registrado`);
     }
     return;
   })
   .addAnswer(
     "Por favor escriba su dirección",
     { capture: true, delay: 600 },
-    async (ctx, { fallBack, flowDynamic, endFlow }) => {
-      const { body: direccion, pushName: name, from: phone } = ctx;
-      const minLenght = 5;
-      if (direccion.startsWith("_event_")) return await fallBack();
-      if (direccion.length <= minLenght)
+    async (ctx, { fallBack, flowDynamic, endFlow, provider }) => {
+      const { body: address, pushName: name, from: phone } = ctx;
+      console.log(provider);
+      const addresMinLenght = 5;
+      if (address.startsWith("_event_")) return await fallBack();
+      if (address.length <= addresMinLenght)
         return await fallBack(
-          `Calle necesita de al menos unos ${minLenght} caracteres`
+          `Calle necesita de al menos unos ${addresMinLenght} caracteres`
         );
 
-      const customer = new Customer(name, direccion, direccion, phone);
+      const customer = new Customer(name, address, address, phone);
       customerService.saveCustomer(customer);
+      const createdCustomer = customerService.getCustomer(phone);
+      console.log(createdCustomer);
       await flowDynamic({
-        body: `${customerService.getCustomer(phone)}, gracias por registrarte.`,
+        body: `${createdCustomer.name}, gracias por registrarte.`,
       });
       return;
     }
