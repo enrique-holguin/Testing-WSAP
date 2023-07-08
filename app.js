@@ -51,7 +51,7 @@ const main = async () => {
     fileStream.pipe(res);
   });
 
-  app.listen(BOTPORT, () => {
+  app.listen(BOTPORT, "0.0.0.0", () => {
     console.log(`http://localhost:${BOTPORT}`);
   });
 };
