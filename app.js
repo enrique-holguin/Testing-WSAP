@@ -36,6 +36,10 @@ const main = async () => {
     database: adapterDB,
   });
 
+  app.get("/", async (req, res) => {
+    res.send("Hola Mundo");
+  });
+
   app.get("/get-qr", async (req, res) => {
     const YOUR_PATH_QR = join(process.cwd(), `bot.qr.png`);
     const fileStream = createReadStream(YOUR_PATH_QR);
