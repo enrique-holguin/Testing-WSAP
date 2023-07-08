@@ -9,7 +9,8 @@ const BOTNAME = process.env.BOT_NAME;
 const BOTPORT = process.env.BOT_PORT;
 const express = require("express");
 const { join } = require("path");
-const { createReadStream } = require("fs");
+const { createReadStream, readFileSync } = require("fs");
+const qr = require("qrcode-terminal");
 
 //Flows
 const flowMain = require("./flows/flowMain");
@@ -18,6 +19,8 @@ const flowPurcharse = require("./flows/flowPurchase");
 const flowAdmin = require("./flows/flowPurchase");
 const flowCatalogo = require("./flows/flowTest2");
 const { flowForm } = require("./flows/flowTest3");
+const sharp = require("sharp");
+const { error } = require("console");
 
 const app = express();
 const main = async () => {
@@ -48,7 +51,9 @@ const main = async () => {
     fileStream.pipe(res);
   });
 
-  app.listen(BOTPORT, () => console.log(`http://localhost:${BOTPORT}`));
+  app.listen(BOTPORT, () => {
+    console.log(`http://localhost:${BOTPORT}`);
+  });
 };
 
 main();
