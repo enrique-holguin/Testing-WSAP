@@ -136,4 +136,4 @@ baileys.log
 core.class.log
 
 # Omitir .d.ts files de todo el proyecto
-*.d.ts
+api/**/*.d.ts
