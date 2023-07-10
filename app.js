@@ -16,9 +16,11 @@ const { join } = require("path");
 const { createReadStream } = require("fs");
 
 //Flows
-const flowMain = require("./flows/flowMain");
+const { flowMain } = require("./flows/flowMain");
 
+//Express
 const app = express();
+
 const main = async () => {
   const adapterDB = new MockAdapter();
   const adapterFlow = createFlow([flowMain]);

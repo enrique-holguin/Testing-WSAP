@@ -1,7 +1,7 @@
 //@ts-check
 
 /**
- * @typedef {import('../types/UserData.types').UserData} UserData
+ * @typedef {import('./User.types').UserData} UserData
  */
 
 class User {
@@ -16,3 +16,5 @@ class User {
     this.address = address;
   }
 }
+
+module.exports = User;
