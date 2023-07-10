@@ -17,13 +17,14 @@ const { createReadStream } = require("fs");
 
 //Flows
 const { flowMain } = require("./flows/flowMain");
+const { flowRegister } = require("./flows/flowRegister");
 
 //Express
 const app = express();
 
 const main = async () => {
   const adapterDB = new MockAdapter();
-  const adapterFlow = createFlow([flowMain]);
+  const adapterFlow = createFlow([flowMain, flowRegister]);
   const adapterProvider = createProvider(BaileysProvider);
 
   createBot({
