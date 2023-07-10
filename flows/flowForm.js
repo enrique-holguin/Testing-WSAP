@@ -1,4 +1,4 @@
-const { addKeyword, EVENTS } = require("@bot-whatsapp/bot");
+const { addKeyword } = require("@bot-whatsapp/bot");
 
 //Servicios y Repistorios
 const { UserRepository } = require("../api/User/repositories/UserRepository");
@@ -9,16 +9,16 @@ const userRepository = new UserRepository();
 const userService = new UserService(userRepository);
 
 //Mensajes
-const { messages } = require("../utils/messages/flowMain");
+const { messages } = require("../utils/messages/flowForm");
 
-const flowMain = addKeyword(EVENTS.WELCOME).addAction(
+const flowForm = addKeyword("form").addAction(
   async (ctx, { flowDynamic, endFlow, gotoFlow }) => {
-    const { from: phone, pushName } = ctx;
+    const { from: phone } = ctx;
     const user = userService.getUser(phone);
-    const name = user ? user.name : pushName;
-    await flowDynamic(messages.welcome(name));
-    return;
+    return user
+      ? await flowDynamic(messages.authorize(user))
+      : await endFlow(messages.authorize(user));
   }
 );
 
-module.exports = { flowMain };
+module.exports = { flowForm };
