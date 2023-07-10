@@ -5,7 +5,6 @@ const { UserRepository } = require("../repositories/UserRepository");
 
 class UserService {
   /**
-   *
    * @param {UserRepository} userRepository
    */
   constructor(userRepository) {
@@ -13,7 +12,6 @@ class UserService {
   }
 
   /**
-   *
    * @param {number} phone
    */
   getUser(phone) {
@@ -21,7 +19,6 @@ class UserService {
   }
 
   /**
-   *
    * @param {User} user
    */
   saveUser(user) {
