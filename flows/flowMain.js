@@ -1,9 +1,5 @@
 const { addKeyword, EVENTS } = require("@bot-whatsapp/bot");
 
-//Servicios y Repistorios
-const { UserRepository } = require("../api/User/repositories/UserRepository");
-const { UserService } = require("../api/User/services/UserService");
-
 //Inyección de dependencias User
 const { userService } = require("../containers/container");
 
