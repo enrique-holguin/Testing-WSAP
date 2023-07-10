@@ -1,34 +1,27 @@
 //acceder a las variables de entorno .env
 require("dotenv").config();
-const { createBot, createProvider, createFlow } = require("@bot-whatsapp/bot");
+const {
+  createBot,
+  createProvider,
+  createFlow,
+  addKeyword,
+  EVENTS,
+} = require("@bot-whatsapp/bot");
 
 const QRPortalWeb = require("@bot-whatsapp/portal");
 const BaileysProvider = require("@bot-whatsapp/provider/baileys");
 const MockAdapter = require("@bot-whatsapp/database/mock");
 const express = require("express");
 const { join } = require("path");
-const { createReadStream, readFileSync } = require("fs");
-const qr = require("qrcode-terminal");
+const { createReadStream } = require("fs");
 
 //Flows
 const flowMain = require("./flows/flowMain");
-const { flowTest } = require("./flows/flowTest");
-const flowPurcharse = require("./flows/flowPurchase");
-const flowAdmin = require("./flows/flowPurchase");
-const flowCatalogo = require("./flows/flowTest2");
-const { flowForm } = require("./flows/flowTest3");
-const sharp = require("sharp");
-const { error } = require("console");
 
 const app = express();
 const main = async () => {
   const adapterDB = new MockAdapter();
-  const adapterFlow = createFlow([
-    flowPurcharse,
-    flowAdmin,
-    flowCatalogo,
-    flowTest(15),
-  ]);
+  const adapterFlow = createFlow([flowMain]);
   const adapterProvider = createProvider(BaileysProvider);
 
   createBot({
