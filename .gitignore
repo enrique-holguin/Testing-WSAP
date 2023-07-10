@@ -134,3 +134,6 @@ bot_sessions
 bot.qr.png
 baileys.log
 core.class.log
+
+# Omitir .d.ts files de todo el proyecto
+*.d.ts
