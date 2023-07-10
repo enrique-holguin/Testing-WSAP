@@ -1,7 +1,12 @@
 const { addKeyword, EVENTS, addAnswer } = require("@bot-whatsapp/bot");
 
+//Constructor
+const User = require("../api/User/models/User");
+
 //Inyección de dependencias User
 const { userService } = require("../containers/userContainer");
+
+//Mensajes
 const { messages } = require("../utils/messages/flowRegister");
 
 //Variable donde se almacena los datos en caché
@@ -13,7 +18,7 @@ const {
   REGEX_EVENT_LOCATION,
 } = require("../utils/regex/regex");
 
-const flowRegister = addKeyword("regis")
+const flowRegister = addKeyword("3")
   .addAction(async (ctx, { fallBack, flowDynamic, endFlow }) => {
     const { from: phone } = ctx;
     const user = userService.getUser(phone);
@@ -76,9 +81,10 @@ const flowRegister = addKeyword("regis")
       if (address.startsWith("_event_"))
         return await fallBack(messages.invalidAddress);
       tempDataUsers[phone].address = address;
-      userService.saveUser(tempDataUsers[phone]);
-      const user = userService.getUser(phone);
-      await flowDynamic(`Perfecto ${user.name}`);
+      const newUser = new User({ ...tempDataUsers[phone] });
+      userService.saveUser(newUser);
+      const getUser = userService.getUser(phone);
+      await flowDynamic(`Perfecto ${getUser.name}`);
       await endFlow(messages.registrationCompleted);
       return;
     }

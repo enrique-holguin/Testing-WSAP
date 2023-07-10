@@ -6,7 +6,7 @@ const { userService } = require("../containers/userContainer");
 //Mensajes
 const { messages } = require("../utils/messages/flowForm");
 
-const flowForm = addKeyword("form").addAction(
+const flowForm = addKeyword("4").addAction(
   async (ctx, { flowDynamic, endFlow, gotoFlow }) => {
     const { from: phone } = ctx;
     const user = userService.getUser(phone);
