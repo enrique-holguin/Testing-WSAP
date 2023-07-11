@@ -14,6 +14,10 @@ const { tempDataUsers } = require("../api/User/cache/dataCache");
 
 //Constantes
 const { registerKeyword } = require("../utils/constants/flowKeywords");
+const { delay } = require("@adiwajshing/baileys");
+
+//Flows
+const { flowMain } = require("./flowMain");
 
 //functions
 const {
@@ -90,7 +94,8 @@ const flowRegister = addKeyword(registerKeyword, { sensitive: true })
       const getUser = userService.getUser(phone);
       await flowDynamic(`Perfecto ${getUser.name}`);
       // cleanCacheUser(phone); //Borramos los datos de la cache
-      return await endFlow(messages.registrationCompleted);
+      await flowDynamic(messages.registrationCompleted);
+      return await gotoFlow(flowMain);
     }
   );
 module.exports = { flowRegister };

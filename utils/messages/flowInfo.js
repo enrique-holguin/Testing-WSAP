@@ -10,7 +10,7 @@ const messages = Object.freeze({
 🎨 Diseño de interfaces intuitivas y mucho más.
 Estamos aquí para ayudarte a alcanzar el éxito en el mundo digital.😊🚀`,
   info: `Si deseas obtener más información o contactarnos.
-Simplemente *Escriba la opción ${formKeyword}* en este chat.`,
+*Escriba la opción 3️⃣*`,
 });
 
 module.exports = { messages };
