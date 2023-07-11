@@ -1,4 +1,4 @@
-const { addKeyword, EVENTS, addAnswer } = require("@bot-whatsapp/bot");
+const { addKeyword } = require("@bot-whatsapp/bot");
 
 //Constructor
 const User = require("../api/User/models/User");
@@ -11,6 +11,9 @@ const { messages } = require("../utils/messages/flowRegister");
 
 //Variable donde se almacena los datos en caché
 const { tempDataUsers } = require("../api/User/cache/dataCache");
+
+//Constantes
+const { registerKeyword } = require("../utils/constants/flowKeywords");
 
 //functions
 const {
@@ -25,7 +28,7 @@ const {
   REGEX_EVENT_LOCATION,
 } = require("../utils/regex/regex");
 
-const flowRegister = addKeyword("3")
+const flowRegister = addKeyword(registerKeyword)
   .addAction(async (ctx, { fallBack, flowDynamic, endFlow }) => {
     const { from: phone } = ctx;
     const user = userService.getUser(phone);
