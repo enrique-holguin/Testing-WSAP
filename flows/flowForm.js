@@ -9,13 +9,18 @@ const { messages } = require("../utils/messages/flowForm");
 //Constantes
 const { formKeyword } = require("../utils/constants/flowKeywords");
 
+//flows
+const { flowRegister } = require("./flowRegister");
+
 const flowForm = addKeyword(formKeyword).addAction(
   async (ctx, { flowDynamic, endFlow, gotoFlow }) => {
     const { from: phone } = ctx;
     const user = userService.getUser(phone);
-    return user
-      ? await flowDynamic(messages.authorize(user))
-      : await endFlow(messages.authorize(user));
+    if (!user) {
+      return await gotoFlow(flowRegister);
+    }
+    await flowDynamic(messages.authorize(user));
+    return;
   }
 );
 

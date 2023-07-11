@@ -11,10 +11,10 @@ const messages = Object.freeze({
   instructions:
     "Escriba el *Número* que corresponda a la opción que desea elegir",
   menu: [
-    `*1* - 🏢 ¿Quiénes somos?`,
-    `*2* - 📊 Estadísticas`,
-    `*${flowsKeywords.formKeyword}* - 🧑 Contáctenos`,
-    `*${flowsKeywords.registerKeyword}* - 📝 Registrarse`,
+    `1️⃣ - 🏢 ¿Quiénes somos?`,
+    `2️⃣ - 📊 Estadísticas`,
+    `3️⃣ - 🧑 Contáctenos`,
+    `4️⃣ - 📝 Registrarse`,
   ],
 });
 

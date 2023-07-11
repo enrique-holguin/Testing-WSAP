@@ -28,6 +28,25 @@ const {
   REGEX_EVENT_LOCATION,
 } = require("../utils/regex/regex");
 
+const flowEnd = addKeyword("Ends").addAnswer(messages.registrationCompleted);
+
+const flowAddress = addKeyword("GASGASGSAGASGSAGASGA").addAnswer(
+  messages.requestAddress,
+  { capture: true, delay: 600 },
+  async (ctx, { fallBack, flowDynamic, endFlow, gotoFlow }) => {
+    const { body: address, from: phone } = ctx;
+    if (exitFlow(address)) return endFlow(messages.exit);
+    if (isEvent(address)) return await fallBack(messages.invalidAddress);
+    tempDataUsers[phone].address = address;
+    const newUser = new User({ ...tempDataUsers[phone] });
+    userService.saveUser(newUser);
+    const getUser = userService.getUser(phone);
+    await flowDynamic(`Perfecto ${getUser.name}`);
+    // cleanCacheUser(phone); //Borramos los datos de la cache
+    return await gotoFlow(flowEnd);
+  }
+);
+
 const flowRegister = addKeyword(registerKeyword)
   .addAction(async (ctx, { fallBack, flowDynamic, endFlow }) => {
     const { from: phone } = ctx;
@@ -51,9 +70,8 @@ const flowRegister = addKeyword(registerKeyword)
       if (exitFlow(name)) return endFlow(messages.exit);
       if (isEvent(name)) return await fallBack(messages.invalidName);
       if (name.length < nameMinLength || name.length > nameMaxLength) {
-        return await fallBack(
-          messages.minMaxLength(nameMinLength, nameMaxLength)
-        );
+        await fallBack(messages.minMaxLength(nameMinLength, nameMaxLength));
+        return;
       }
       if (!REGEX_WHITE_SPACE.test(name))
         return await fallBack(messages.notWhiteSpace);
@@ -75,25 +93,10 @@ const flowRegister = addKeyword(registerKeyword)
       const lat = ctx.message?.locationMessage?.degreesLatitude;
       const lng = ctx.message?.locationMessage?.degreesLongitude;
       tempDataUsers[phone].geo = { lat, lng };
+      await gotoFlow(flowAddress);
       return;
-    }
-  )
-  .addAnswer(
-    messages.requestAddress,
-    { capture: true, delay: 500 },
-    async (ctx, { fallBack, flowDynamic, endFlow }) => {
-      const { body: address, from: phone } = ctx;
-      if (exitFlow(address)) return endFlow(messages.exit);
-      if (isEvent(address)) return await fallBack(messages.invalidAddress);
-      tempDataUsers[phone].address = address;
-      const newUser = new User({ ...tempDataUsers[phone] });
-      userService.saveUser(newUser);
-      const getUser = userService.getUser(phone);
-      await flowDynamic(`Perfecto ${getUser.name}`);
-      cleanCacheUser(phone); //Borramos los datos de la cache
-      await endFlow(messages.registrationCompleted);
-      return;
-    }
+    },
+    [flowAddress]
   );
 
 module.exports = { flowRegister };
