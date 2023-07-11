@@ -12,6 +12,9 @@ const { messages } = require("../utils/messages/flowRegister");
 //Variable donde se almacena los datos en caché
 const { tempDataUsers } = require("../api/User/cache/dataCache");
 
+//functions
+const { cleanCacheUser, isEvent } = require("../utils/functions/functions");
+
 //REGEX
 const {
   REGEX_WHITE_SPACE,
@@ -39,8 +42,7 @@ const flowRegister = addKeyword("3")
       const nameMinLength = 5;
       const nameMaxLength = 12;
       if (name.toLowerCase().includes("salir")) return endFlow(messages.exit);
-      if (name.startsWith("_event_"))
-        return await fallBack(messages.invalidName);
+      if (isEvent(name)) return await fallBack(messages.invalidName);
       if (name.length < nameMinLength || name.length > nameMaxLength) {
         return await fallBack(
           messages.minMaxLength(nameMinLength, nameMaxLength)
@@ -48,8 +50,7 @@ const flowRegister = addKeyword("3")
       }
       if (!REGEX_WHITE_SPACE.test(name))
         return await fallBack(messages.notWhiteSpace);
-      //Creación del usuario y almacenamiento en cache
-      tempDataUsers[phone] = { name, phone };
+      tempDataUsers[phone] = { name, phone }; //Almacenando datos en cache
       await flowDynamic(`Perfecto ${name} ✔️`);
       return;
     }
@@ -78,13 +79,13 @@ const flowRegister = addKeyword("3")
       const { body: address, from: phone } = ctx;
       if (address.toLowerCase().includes("salir"))
         return endFlow(messages.exit);
-      if (address.startsWith("_event_"))
-        return await fallBack(messages.invalidAddress);
+      if (isEvent(address)) return await fallBack(messages.invalidAddress);
       tempDataUsers[phone].address = address;
       const newUser = new User({ ...tempDataUsers[phone] });
       userService.saveUser(newUser);
       const getUser = userService.getUser(phone);
       await flowDynamic(`Perfecto ${getUser.name}`);
+      cleanCacheUser(phone); //Borramos los datos de la cache
       await endFlow(messages.registrationCompleted);
       return;
     }

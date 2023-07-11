@@ -12,7 +12,7 @@ const users = {};
 // Recorremos los datos de usuarios y los agregamos al objeto 'users'
 mockDataUsers.forEach((userData) => {
   const { phone } = userData;
-  users[phone] = { ...userData };
+  users[phone] = new User({ ...userData });
 });
 
 module.exports = { users };
