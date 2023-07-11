@@ -13,7 +13,11 @@ const { messages } = require("../utils/messages/flowRegister");
 const { tempDataUsers } = require("../api/User/cache/dataCache");
 
 //functions
-const { cleanCacheUser, isEvent } = require("../utils/functions/functions");
+const {
+  cleanCacheUser,
+  isEvent,
+  exitFlow,
+} = require("../utils/functions/functions");
 
 //REGEX
 const {
@@ -41,7 +45,7 @@ const flowRegister = addKeyword("3")
       const { body: name, from: phone } = ctx;
       const nameMinLength = 5;
       const nameMaxLength = 12;
-      if (name.toLowerCase().includes("salir")) return endFlow(messages.exit);
+      if (exitFlow(name)) return endFlow(messages.exit);
       if (isEvent(name)) return await fallBack(messages.invalidName);
       if (name.length < nameMinLength || name.length > nameMaxLength) {
         return await fallBack(
@@ -60,8 +64,7 @@ const flowRegister = addKeyword("3")
     { capture: true, delay: 600 },
     async (ctx, { fallBack, flowDynamic, endFlow, gotoFlow }) => {
       const { body: geoEvent, from: phone } = ctx;
-      if (geoEvent.toLowerCase().includes("salir"))
-        return endFlow(messages.exit);
+      if (exitFlow(geoEvent)) return endFlow(messages.exit);
       if (!REGEX_EVENT_LOCATION.test(geoEvent)) {
         await fallBack(messages.invalidGeo);
         return;
@@ -77,8 +80,7 @@ const flowRegister = addKeyword("3")
     { capture: true, delay: 500 },
     async (ctx, { fallBack, flowDynamic, endFlow }) => {
       const { body: address, from: phone } = ctx;
-      if (address.toLowerCase().includes("salir"))
-        return endFlow(messages.exit);
+      if (exitFlow(address)) return endFlow(messages.exit);
       if (isEvent(address)) return await fallBack(messages.invalidAddress);
       tempDataUsers[phone].address = address;
       const newUser = new User({ ...tempDataUsers[phone] });
