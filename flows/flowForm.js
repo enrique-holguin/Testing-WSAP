@@ -12,7 +12,7 @@ const { formKeyword } = require("../utils/constants/flowKeywords");
 //flows
 const { flowRegister } = require("./flowRegister");
 
-const flowForm = addKeyword(formKeyword).addAction(
+const flowForm = addKeyword(formKeyword, { sensitive: true }).addAction(
   async (ctx, { flowDynamic, endFlow, gotoFlow }) => {
     const { from: phone } = ctx;
     const user = userService.getUser(phone);

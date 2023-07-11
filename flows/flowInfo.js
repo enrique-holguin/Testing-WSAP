@@ -4,7 +4,7 @@ const { infoKeyword } = require("../utils/constants/flowKeywords");
 //messages
 const { messages } = require("../utils/messages/flowInfo");
 
-const flowInfo = addKeyword(infoKeyword)
+const flowInfo = addKeyword(infoKeyword, { sensitive: true })
   .addAnswer([messages.aboutUs], {
     delay: 500,
   })
