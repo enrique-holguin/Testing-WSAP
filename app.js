@@ -47,6 +47,10 @@ const main = async () => {
     fileStream.pipe(res);
   });
 
+  app.post("/send", async (req, res) => {
+    res.json("Hola");
+  });
+
   app.listen(process.env.PORT, "0.0.0.0", () => {
     console.log(`http://localhost:${process.env.PORT}`);
   });
