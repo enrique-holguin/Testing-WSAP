@@ -18,13 +18,15 @@ const { createReadStream } = require("fs");
 //Flows
 const { flowMain } = require("./flows/flowMain");
 const { flowRegister } = require("./flows/flowRegister");
+const { flowForm } = require("./flows/flowForm");
+const { flowInfo } = require("./flows/flowInfo");
 
 //Express
 const app = express();
 
 const main = async () => {
   const adapterDB = new MockAdapter();
-  const adapterFlow = createFlow([flowMain, flowRegister]);
+  const adapterFlow = createFlow([flowMain, flowRegister, flowForm, flowInfo]);
   const adapterProvider = createProvider(BaileysProvider);
 
   createBot({
@@ -43,6 +45,10 @@ const main = async () => {
 
     res.writeHead(200, { "Content-Type": "image/png" });
     fileStream.pipe(res);
+  });
+
+  app.post("/send", async (req, res) => {
+    res.json("Hola");
   });
 
   app.listen(process.env.PORT, "0.0.0.0", () => {

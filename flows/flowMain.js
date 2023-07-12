@@ -6,15 +6,20 @@ const { userService } = require("../containers/userContainer");
 //Mensajes
 const { messages } = require("../utils/messages/flowMain");
 
-const flowMain = addKeyword(EVENTS.WELCOME).addAction(
-  async (ctx, { flowDynamic, endFlow, gotoFlow }) => {
+//Constantes
+const { delay } = require("@adiwajshing/baileys");
+
+const flowMain = addKeyword(EVENTS.WELCOME)
+  .addAction(async (ctx, { flowDynamic, endFlow, gotoFlow }) => {
     const { from: phone, pushName } = ctx;
-    console.log(typeof phone);
     const user = userService.getUser(phone);
     const name = user ? user.name : pushName;
+    await delay(700);
     await flowDynamic(messages.welcome(name));
+    await delay(700);
+    await flowDynamic(messages.instructions);
     return;
-  }
-);
+  })
+  .addAnswer(messages.menu, { delay: 500 });
 
 module.exports = { flowMain };

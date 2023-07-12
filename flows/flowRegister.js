@@ -1,11 +1,30 @@
-const { addKeyword, EVENTS, addAnswer } = require("@bot-whatsapp/bot");
+const { addKeyword } = require("@bot-whatsapp/bot");
+
+//Constructor
+const User = require("../api/User/models/User");
 
 //Inyección de dependencias User
 const { userService } = require("../containers/userContainer");
+
+//Mensajes
 const { messages } = require("../utils/messages/flowRegister");
 
 //Variable donde se almacena los datos en caché
 const { tempDataUsers } = require("../api/User/cache/dataCache");
+
+//Constantes
+const { registerKeyword } = require("../utils/constants/flowKeywords");
+const { delay } = require("@adiwajshing/baileys");
+
+//Flows
+const { flowMain } = require("./flowMain");
+
+//functions
+const {
+  cleanCacheUser,
+  isEvent,
+  exitFlow,
+} = require("../utils/functions/functions");
 
 //REGEX
 const {
@@ -13,7 +32,7 @@ const {
   REGEX_EVENT_LOCATION,
 } = require("../utils/regex/regex");
 
-const flowRegister = addKeyword("regis")
+const flowRegister = addKeyword(registerKeyword, { sensitive: true })
   .addAction(async (ctx, { fallBack, flowDynamic, endFlow }) => {
     const { from: phone } = ctx;
     const user = userService.getUser(phone);
@@ -33,18 +52,15 @@ const flowRegister = addKeyword("regis")
       const { body: name, from: phone } = ctx;
       const nameMinLength = 5;
       const nameMaxLength = 12;
-      if (name.toLowerCase().includes("salir")) return endFlow(messages.exit);
-      if (name.startsWith("_event_"))
-        return await fallBack(messages.invalidName);
+      if (exitFlow(name)) return endFlow(messages.exit);
+      if (isEvent(name)) return await fallBack(messages.invalidName);
       if (name.length < nameMinLength || name.length > nameMaxLength) {
-        return await fallBack(
-          messages.minMaxLength(nameMinLength, nameMaxLength)
-        );
+        await fallBack(messages.minMaxLength(nameMinLength, nameMaxLength));
+        return;
       }
       if (!REGEX_WHITE_SPACE.test(name))
         return await fallBack(messages.notWhiteSpace);
-      //Creación del usuario y almacenamiento en cache
-      tempDataUsers[phone] = { name, phone };
+      tempDataUsers[phone] = { name, phone }; //Almacenando datos en cache
       await flowDynamic(`Perfecto ${name} ✔️`);
       return;
     }
@@ -54,8 +70,7 @@ const flowRegister = addKeyword("regis")
     { capture: true, delay: 600 },
     async (ctx, { fallBack, flowDynamic, endFlow, gotoFlow }) => {
       const { body: geoEvent, from: phone } = ctx;
-      if (geoEvent.toLowerCase().includes("salir"))
-        return endFlow(messages.exit);
+      if (exitFlow(geoEvent)) return endFlow(messages.exit);
       if (!REGEX_EVENT_LOCATION.test(geoEvent)) {
         await fallBack(messages.invalidGeo);
         return;
@@ -68,20 +83,19 @@ const flowRegister = addKeyword("regis")
   )
   .addAnswer(
     messages.requestAddress,
-    { capture: true, delay: 500 },
-    async (ctx, { fallBack, flowDynamic, endFlow }) => {
+    { capture: true, delay: 600 },
+    async (ctx, { fallBack, flowDynamic, endFlow, gotoFlow }) => {
       const { body: address, from: phone } = ctx;
-      if (address.toLowerCase().includes("salir"))
-        return endFlow(messages.exit);
-      if (address.startsWith("_event_"))
-        return await fallBack(messages.invalidAddress);
+      if (exitFlow(address)) return endFlow(messages.exit);
+      if (isEvent(address)) return await fallBack(messages.invalidAddress);
       tempDataUsers[phone].address = address;
-      userService.saveUser(tempDataUsers[phone]);
-      const user = userService.getUser(phone);
-      await flowDynamic(`Perfecto ${user.name}`);
-      await endFlow(messages.registrationCompleted);
-      return;
+      const newUser = new User({ ...tempDataUsers[phone] });
+      userService.saveUser(newUser);
+      const getUser = userService.getUser(phone);
+      await flowDynamic(`Perfecto ${getUser.name}`);
+      // cleanCacheUser(phone); //Borramos los datos de la cache
+      await flowDynamic(messages.registrationCompleted);
+      return await gotoFlow(flowMain);
     }
   );
-
 module.exports = { flowRegister };
